@@ -1,8 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 
-/// Brand mark: flame in a rounded ember-gradient tile.
+/// Brand mark: official iGnite logo (medical cross + flame).
 class IgniteLogo extends StatelessWidget {
   const IgniteLogo({super.key, this.size = 72});
 
@@ -10,25 +12,69 @@ class IgniteLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Image.asset(
+      'assets/images/logo_mark.png',
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        gradient: AppColors.emberGradient,
-        borderRadius: BorderRadius.circular(size * 0.3),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.ember.withValues(alpha: 0.35),
-            blurRadius: 24,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Icon(
-        Icons.local_fire_department_rounded,
-        color: Colors.white,
-        size: size * 0.56,
-      ),
+      fit: BoxFit.contain,
+      filterQuality: FilterQuality.medium,
+    );
+  }
+}
+
+/// Full iGnite logo (mark + wordmark) with a looping flame-flicker animation
+/// built from the 10 official brand frames.
+class AnimatedIgniteLogo extends StatefulWidget {
+  const AnimatedIgniteLogo({super.key, this.height = 180});
+
+  final double height;
+
+  @override
+  State<AnimatedIgniteLogo> createState() => _AnimatedIgniteLogoState();
+}
+
+class _AnimatedIgniteLogoState extends State<AnimatedIgniteLogo> {
+  static const _frameCount = 10;
+  int _frame = 0;
+  Timer? _timer;
+  bool _precached = false;
+
+  String _asset(int i) =>
+      'assets/images/frames/frame_${(i + 1).toString().padLeft(2, '0')}.png';
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(milliseconds: 110), (_) {
+      if (mounted) setState(() => _frame = (_frame + 1) % _frameCount);
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_precached) {
+      _precached = true;
+      for (var i = 0; i < _frameCount; i++) {
+        precacheImage(AssetImage(_asset(i)), context);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Image.asset(
+      _asset(_frame),
+      height: widget.height,
+      fit: BoxFit.contain,
+      gaplessPlayback: true,
+      filterQuality: FilterQuality.medium,
     );
   }
 }

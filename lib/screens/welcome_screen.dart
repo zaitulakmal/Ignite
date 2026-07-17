@@ -20,17 +20,8 @@ class WelcomeScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Spacer(flex: 2),
-              const Center(child: IgniteLogo(size: 96)),
-              const SizedBox(height: 28),
-              Text(
-                'iGnite',
-                textAlign: TextAlign.center,
-                style: text.displaySmall?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: -0.5,
-                ),
-              ),
-              const SizedBox(height: 10),
+              const Center(child: AnimatedIgniteLogo(height: 200)),
+              const SizedBox(height: 16),
               Text(
                 'Smart recovery, wherever it hurts.',
                 textAlign: TextAlign.center,
